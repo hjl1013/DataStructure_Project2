@@ -9,7 +9,7 @@ class RBNode{
     public :
         T key;
         U value;
-	RBNode<T,U> * parent;
+	    RBNode<T,U> * parent;
         RBNode<T,U> * left;
         RBNode<T,U> * right;
         int color; // 1 -> red, 0 -> black
