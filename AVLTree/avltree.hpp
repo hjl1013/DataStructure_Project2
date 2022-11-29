@@ -217,24 +217,20 @@ AVLNode<T,U>* AVLTree<T,U>::remove(AVLNode<T,U>*& node, const T& key) {
             return org_left;
         }
         else {
-            AVLNode<T, U> *leaf = node->left;
-            while (leaf->right) {
-                leaf = leaf->right;
+            AVLNode<T, U> *replace = node->right;
+            while (replace->left) {
+                replace = replace->left;
             }
-            T new_key = leaf->key;
-            U new_value = leaf->value;
-            node = remove(node, new_key);
-            node->key = new_key;
-            node->value = new_value;
-            return node;
+            node->key = replace->key;
+            node->value = replace->value;
+            node->right = remove(node->right, replace->key);
         }
     }
-
     // remove recursively
-    if (key < node->key){
+    else if (key < node->key){
         node->left = remove(node->left, key);
     }
-    else{
+    else {
         node->right = remove(node->right, key);
     }
 
@@ -247,21 +243,8 @@ AVLNode<T,U>* AVLTree<T,U>::remove(AVLNode<T,U>*& node, const T& key) {
             node = rotate_left(node);
         }
         else {
-            AVLNode<T,U> *org_node = node;
-            AVLNode<T,U> *org_right = node->right;
-            AVLNode<T,U> *org_right_left = node->right->left;
-
-            // change structure
-            org_node->right = org_right_left->left;
-            org_right->left = org_right_left->right;
-            node = org_right_left;
-            node->right = org_right;
-            node->left = org_node;
-
-            // update heights
-            org_node->height = (getHeight(org_node->left) > getHeight(org_node->right))? getHeight(org_node->left)+1: getHeight(org_node->right)+1;
-            org_right->height = (getHeight(org_right->left) > getHeight(org_right->right))? getHeight(org_right->left)+1: getHeight(org_right->right)+1;
-            org_right_left->height = (getHeight(org_right_left->left) > getHeight(org_right_left->right))? getHeight(org_right_left->left)+1: getHeight(org_right_left->right)+1;
+            node->right = rotate_right(node->right);
+            node = rotate_left(node);
         }
     }
     else if(getHeight(node->left) - getHeight(node->right) > 1) {
@@ -269,21 +252,8 @@ AVLNode<T,U>* AVLTree<T,U>::remove(AVLNode<T,U>*& node, const T& key) {
             node = rotate_right(node);
         }
         else {
-            AVLNode<T, U> *org_node = node;
-            AVLNode<T, U> *org_left = node->left;
-            AVLNode<T, U> *org_left_right = node->left->right;
-
-            //change structure
-            org_node->left = org_left_right->right;
-            org_left->right = org_left_right->left;
-            node = org_left_right;
-            node->right = org_node;
-            node->left = org_left;
-
-            //update height
-            org_node->height = (getHeight(org_node->left) > getHeight(org_node->right))? getHeight(org_node->left)+1: getHeight(org_node->right)+1;
-            org_left->height = (getHeight(org_left->left) > getHeight(org_left->right))? getHeight(org_left->left)+1: getHeight(org_left->right)+1;
-            org_left_right->height = (getHeight(org_left_right->left) > getHeight(org_left_right->right))? getHeight(org_left_right->left)+1: getHeight(org_left_right->right)+1;
+            node->left = rotate_left(node->left);
+            node = rotate_right(node);
         }
     }
 
