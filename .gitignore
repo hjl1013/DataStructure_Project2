@@ -6,4 +6,4 @@
 
 # build file
 *.o
-*test
+*/test
